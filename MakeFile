@@ -1,0 +1,30 @@
+#compiler
+CXX = g++
+# Compiler flags
+CXXFLAGS = -std=c++11 -Wall -Wextra -pedantic -Iinclude -Isrc -g 
+
+# Source files
+SRCS = src/wave.cpp src/tile.cpp src/cell.cpp src/main.cpp src/voxParser.cpp src/vector3D.cpp
+# Object files
+OBJS = $(SRCS:.cpp=.o)
+# Executable
+EXEC = wfc
+
+# Build rule for executable
+$(EXEC): $(OBJS)
+	$(CXX) $(CXXFLAGS) $(OBJS) -o $(EXEC)
+
+# Build rule for object files
+%.o: %.cpp
+	$(CXX) $(CXXFLAGS) -c $< -o $@
+
+# Clean rule
+clean:
+ifeq ($(OS),Windows_NT)
+	del $(subst /,\,$(OBJS)) $(EXEC).exe
+else
+	rm -f $(OBJS) $(EXEC)
+endif
+
+run: $(EXEC)
+	./$(EXEC)
