@@ -10,12 +10,14 @@
 #include <unordered_set>
 
 
-const int TILE_SIZE_X = 8;
-const int TILE_SIZE_Y = 8;  
-const int TILE_SIZE_Z = 8;
+const int TILE_SIZE_X = 16;
+const int TILE_SIZE_Y = 16;  
+const int TILE_SIZE_Z = 16;
 
 const int NUM_DIRECTIONS = 6;
 enum Direction {FRONT, BACK, LEFT, RIGHT, TOP, BOTTOM};
+
+const double ERROR_PERCENTAGE_THRESHOLD = 0;
 
 
 // void printDirection(Direction dir) {s

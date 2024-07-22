@@ -219,7 +219,7 @@ Cell* Wave::pickRandomCell() {
 Vector3D<uint8_t> Wave::assemble() {
     //initialize the final model
     Vector3D<uint8_t> finalModel;
-
+    int test = TILE_SIZE_X;
     
     finalModel.resize(grid.dimX()*TILE_SIZE_X, grid.dimY()*TILE_SIZE_Y, grid.dimZ()*TILE_SIZE_Z);
 

@@ -216,8 +216,12 @@ bool Tile::matchCenterElements(std::vector<std::vector<uint8_t>> face, std::vect
 bool Tile::matchAllElements(std::vector<std::vector<uint8_t>> face, std::vector<std::vector<uint8_t>> otherFace) {
     size_t numRows = face.size();
     size_t numCols = face[0].size();
+    int errorCount = 0;
 
-        for (size_t x = 0; x < numRows; x++) {
+    int numElements = numRows*numCols;
+    int allowedErrorCount = numElements*ERROR_PERCENTAGE_THRESHOLD/100;
+
+    for (size_t x = 0; x < numRows; x++) {
         for (size_t y = 0; y < numCols; y++) {
             //std::cout << "\ncenter: " << static_cast<int>(center[x][y]) << "\nother center: " << static_cast<int>(otherCenter[numRows - 1 - x][y]) << std::endl;
             // if (center[x][y] != otherCenter[numRows - 1 - x][y]) {
@@ -225,8 +229,10 @@ bool Tile::matchAllElements(std::vector<std::vector<uint8_t>> face, std::vector<
             //     return false;
             // }
             if (face[x][y] != otherFace[x][y]) {
-                //std::cout << "\n but return false... \n";
-                return false;
+                errorCount++;
+                if (errorCount > allowedErrorCount) {
+                    return false;
+                }      
             }
         }
     }
