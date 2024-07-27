@@ -42,14 +42,27 @@ bool Wave::observe() {
         return false;
     }
 
-    propagateCollapse(randomCell, 30);
+    propagateCollapse(randomCell, WAVE_PROPAGATION_DEPTH);
 
     return true;
 }
 
-//go through all the six adjacent cells of the cell, and remove tile options from the adjacent cells
+
+
+/**
+ * The function will go through all the six adjacent cells 
+ * of the @param cell and remove invalid tile options
+ * 
+ * It will be recursivly called for the adajacent cells if 
+ * their tileOptions were updated, and quit if the recursiveness reaches a certain depth
+ * 
+ * @param depth depth of the propagation in terms of number of cells
+*/
 void Wave::propagateCollapse(Cell* cell, int depth) {
     depth = depth - 1;
+    if (depth < 0) {
+        return;
+    }
 
     std::unordered_map<Direction, std::unordered_set<const Tile*>> allowedTiles;
 
@@ -68,36 +81,24 @@ void Wave::propagateCollapse(Cell* cell, int depth) {
     }
 
     //We need to propagate the constraints to the adjacent cells and remove invalid tile options.
-    if (depth >= 0) {
-        for (Direction dir : {FRONT, BACK, LEFT, RIGHT, TOP, BOTTOM}) {
+    for (Direction dir : {FRONT, BACK, LEFT, RIGHT, TOP, BOTTOM}) {
 
-            Cell* adjacentCell = getAdjacentCell(cell, dir);
+        Cell* adjacentCell = getAdjacentCell(cell, dir);
 
-            if (adjacentCell == nullptr || adjacentCell->isCollapsed()) {
-                //std::cout << "\ncontinued over a collapsed cell\n";
-                continue;
-            }
+        if (adjacentCell == nullptr || adjacentCell->isCollapsed()) {
+            continue;
+        }
 
-            // Convert the unordered_set to a vector to use with updateTileOptions
-            //std::vector<Tile*> allowedTileOptions(allowedTiles[dir].begin(), allowedTiles[dir].end());
-            std::vector<Tile*> allowedTileOptions;
+        // Convert the unordered_set to a vector, so it can be used with updateTileOptions
+        std::vector<Tile*> allowedTileOptions;
+        for (const Tile* tile : allowedTiles[dir]) {
+            allowedTileOptions.push_back(const_cast<Tile*>(tile));
+        }
 
-            for (const Tile* tile : allowedTiles[dir]) {
-                allowedTileOptions.push_back(const_cast<Tile*>(tile));
-            }
+        bool updated = adjacentCell->updateTileOptions(allowedTileOptions);
 
-            bool updated = adjacentCell->updateTileOptions(allowedTileOptions);
-            if (adjacentCell->mark) {
-                assemble();
-                Vector3D<uint8_t> model = assemble();
-                writeVoxFile(model, "vox_tiles/output.vox");
-                std::cout << "\n\n NOT ABLE TO FINISH \n\n";
-                exit(1);
-            }
-            //if the tile options were updated and depth is greater than 0, recursively propagate the constraints
-            if (updated) {
-                propagateCollapse(adjacentCell, depth);
-            }
+        if (updated) {
+            propagateCollapse(adjacentCell, depth);
         }
     }
 }
@@ -151,6 +152,13 @@ void Wave::printEntropy() {
     }    
 }
 
+/**
+ * 
+ * 
+ * 
+ * @re
+*/
+
 
 Cell* Wave::pickRandomCellWithLowestEntropy() {
 
@@ -191,21 +199,32 @@ Cell* Wave::pickRandomCellWithLowestEntropy() {
 }
 
 
-
+/**
+ * Pick a random cell from the grid that is not collapsed
+ * 
+ * 
+ * @return Random cell from grid
+*/
 Cell* Wave::pickRandomCell() {
     std::vector<Cell*> flattenedGrid = grid.flatten();
 
-    //remove all collapsed cells
-    flattenedGrid.erase(std::remove_if(flattenedGrid.begin(), flattenedGrid.end(),
-                                       [](Cell* cell)
-                                       { return cell->isCollapsed(); }),
-                                        flattenedGrid.end());
+    //remove all collapsed cells from flattened grid
+    flattenedGrid.erase(
+        std::remove_if(
+            flattenedGrid.begin(), 
+            flattenedGrid.end(),
+            [](Cell* cell) { 
+                return cell->isCollapsed(); 
+            }
+        ),
+        flattenedGrid.end()
+    );
+
+
     if (flattenedGrid.empty()) {
         //all cells are collapsed
         return nullptr;
     }
-
-    
     
     // pick random collapsed cell
     std::random_device rd;
@@ -216,10 +235,15 @@ Cell* Wave::pickRandomCell() {
     return flattenedGrid[randomIndex];    
 }
 
+/**
+ * Go through all the cells in the grid. Construct a new vector3D by copying 
+ * the data from the tiles the cells collapsed into.
+ * 
+ * 
+ * @return 3D vector of the assembled tiles
+*/
 Vector3D<uint8_t> Wave::assemble() {
-    //initialize the final model
     Vector3D<uint8_t> finalModel;
-    int test = TILE_SIZE_X;
     
     finalModel.resize(grid.dimX()*TILE_SIZE_X, grid.dimY()*TILE_SIZE_Y, grid.dimZ()*TILE_SIZE_Z);
 
@@ -227,20 +251,13 @@ Vector3D<uint8_t> Wave::assemble() {
         for (size_t j = 0; j < grid.dimY(); j++) {
             for (size_t k = 0; k < grid.dimZ(); k++) {
                 Tile* tile;
-                if (grid[i][j][k]->mark) {
-                    tile->voxelData.mark(); //rememeber to remove this as well!!!!!
-                }
+
                 if (grid[i][j][k]->isCollapsed()) {
                     tile = grid[i][j][k]->tileOptions[0];
                 } else {
-                    //std::cout << "found empty slot in grid \n";
+                    std::cerr << "found empty slot in grid at x: " << i << ", y: "<< j << "z: "<< k << std::endl;
                     continue;
                 }
-                
-                // tile->voxelData.print();
-                // std::cout << "\n\n new model \n\n";
-
-                //if (tile == nullptr) 
                 
                 //copy tile data into final model
                 for (int x = 0; x < TILE_SIZE_X; x++) {
@@ -253,7 +270,6 @@ Vector3D<uint8_t> Wave::assemble() {
             }
         }
     }
-    //finalModel.print();
     return finalModel;
 }
 

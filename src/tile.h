@@ -20,33 +20,6 @@ enum Direction {FRONT, BACK, LEFT, RIGHT, TOP, BOTTOM};
 const double ERROR_PERCENTAGE_THRESHOLD = 0;
 
 
-// void printDirection(Direction dir) {s
-//     switch (dir)
-//     {
-//     case FRONT:
-//         std::cout << "Front";
-//         break;
-//     case BACK:
-//         std::cout << "Back";
-//         break;
-//     case LEFT:
-//         std::cout << "Left";
-//         break;
-//     case RIGHT:
-//         std::cout << "Right";
-//         break;
-//     case TOP:
-//         std::cout << "Top";
-//         break;
-//     case BOTTOM:
-//         std::cout << "Bottom";
-//         break;
-//     default:
-//         std::cout << "Unknown Direction";
-//         break;
-//     }
-// }
-
 
 class Tile {
     public:
@@ -63,8 +36,7 @@ class Tile {
         void extractFaces();
 
         void addRotations(); //not sure how to implement this one and keeping scopes
-    
-        //should be unordered sets
+
 
 
         bool matchFaces(const Tile& other, Direction dir);

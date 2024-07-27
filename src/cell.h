@@ -16,7 +16,9 @@ class Cell {
         int y;
         int z;
         int getEntropy() const;
-        bool mark = false; //REMEMBER TO REMOVE THIS ONE
+        int getX() const;
+        int getY() const;
+        int getZ() const;
 
     private:
         

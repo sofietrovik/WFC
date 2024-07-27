@@ -184,13 +184,11 @@ int main() {
 
 
     std::vector<Tile*> tileOptions = emptyTile.getListOfTiles();
-    Wave wave{15, 15, 15, emptyTile.getListOfTiles()};
+    Wave wave{15,15, 15, emptyTile.getListOfTiles()};
 
 
-    //wave.printEntropy();        
-    
-    while(wave.observe()) {
-        //wave.printEntropy();        
+
+    while(wave.observe()) {        
         std::cout << "\nobserving ... \n";
         
     }

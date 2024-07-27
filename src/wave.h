@@ -1,25 +1,24 @@
 #pragma once
 #include "cell.h"
 
+const int WAVE_PROPAGATION_DEPTH = 30;
+
 
 class Wave {
     public:
         Wave(int gridWidth, int gridDepth, int gridHeight, std::vector<Tile*> tiles); 
+        ~Wave();
+
         bool observe();
         Vector3D<uint8_t> assemble();
-        ~Wave();
         void printEntropy();
 
     private:
-        //void collapse();
+        Vector3D<Cell*> grid;
 
         Cell* pickRandomCellWithLowestEntropy();
-
         Cell* pickRandomCell();
-
-        Vector3D<Cell*> grid;
         void propagateCollapse(Cell* cell, int depth);
-        //void propagateConstraintsToAdjacent(Cell* cell, Direction dir, const std::unordered_set<const Tile*>& allowedTiles, int depth);
         Cell* getAdjacentCell(Cell* cell, Direction dir);
 
 

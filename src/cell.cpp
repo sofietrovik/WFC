@@ -43,27 +43,50 @@ int Cell::getEntropy() const {
     return entropy;
 }
 
+int Cell::getX() const {
+    return x; 
+}
 
+int Cell::getY() const {
+    return y;
+}
 
-//remove elements from tileOptions that are not in allowed options
-//return true if any elements has been removed
+int Cell::getZ() const {
+    return z;
+}
+
+/**
+ * Remove all tiles from tileOptions that are not in allowedTileOptions
+ * 
+ * 
+ * @param allowedTileOptions list of the allowed tiles 
+ * @return 'true' if the number of tiles in tileOptions was reduced 'false' if it was not  
+*/
 bool Cell::updateTileOptions(std::vector<Tile*> allowedTileOptions) {
 
     
-    //TODO: improve by sorting tileOptions before initializing, so that i can binary_search?
+    //TODO: improve by sorting tileOptions before initializing, so that I can binary_search?
 
    
 
-    tileOptions.erase(std::remove_if(tileOptions.begin(), tileOptions.end(), [&allowedTileOptions](const Tile* tile) {return std::find(allowedTileOptions.begin(), allowedTileOptions.end(), tile) == allowedTileOptions.end();}), tileOptions.end());
+    tileOptions.erase(
+        std::remove_if(
+            tileOptions.begin(), 
+            tileOptions.end(), 
+            [&allowedTileOptions](const Tile* tile) {
+                return std::find(allowedTileOptions.begin(), allowedTileOptions.end(), tile) == allowedTileOptions.end();
+            }
+        ), 
+        tileOptions.end()
+    );
 
 
-    //check if the entropy has changed (check if some elements have been removed)
     if(tileOptions.empty()) {
-        mark = true;
-        std::cout << "\nuh oh\n";
-
+        std::cerr << "\na cell has no tile options left\n";
+        exit(1);
     }
 
+    //check if the entropy has changed (check if some elements have been removed from tile options)
     if (entropy != tileOptions.size()) {
         updateEntropy();
         return true;

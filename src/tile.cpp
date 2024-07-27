@@ -8,8 +8,7 @@ Tile::Tile (std::string name, const Vector3D<uint8_t>& voxelData)
     }
     
     extractFaces();
-    listOfTiles.push_back(this);
-    //printAllFaces();
+    listOfTiles.push_back(this);;
 }
 
 void Tile::addRotations() {
@@ -23,7 +22,7 @@ void Tile::addRotations() {
 
 
 
-void Tile::printData() {
+void Tile::printData() const{
     voxelData.print();
 }
 
@@ -55,15 +54,13 @@ void printFace(std::vector<std::vector<uint8_t>> face) {
 
 void Tile::printAllFaces() const {
     for (int dir = FRONT; dir < NUM_DIRECTIONS; dir++) {
-        std::cout << "\nface nr: " << dir << std::endl;
+        std::cout << "\nface dir: " << dir << std::endl;
         printFace(static_cast<Direction>(dir));
     }
 }
 
 
 void Tile::extractFaces() {
-
-
     faces[FRONT] = std::vector<std::vector<uint8_t>>(TILE_SIZE_X, std::vector<uint8_t>(TILE_SIZE_Z));
     faces[BACK] = std::vector<std::vector<uint8_t>>(TILE_SIZE_X, std::vector<uint8_t>(TILE_SIZE_Z));
     faces[LEFT] = std::vector<std::vector<uint8_t>>(TILE_SIZE_Y, std::vector<uint8_t>(TILE_SIZE_Z));
@@ -71,33 +68,24 @@ void Tile::extractFaces() {
     faces[TOP] = std::vector<std::vector<uint8_t>>(TILE_SIZE_X, std::vector<uint8_t>(TILE_SIZE_Y));
     faces[BOTTOM] = std::vector<std::vector<uint8_t>>(TILE_SIZE_X, std::vector<uint8_t>(TILE_SIZE_Y));
 
-    
-
     for (int x = 0; x < TILE_SIZE_X; x++) {
         for (int z = 0; z < TILE_SIZE_Z; z++) {
-            // faces[FRONT][x][z] = voxelData[x][0][z]; //riktig
-            // faces[BACK][x][z] = voxelData[TILE_SIZE_X - 1 - x][TILE_SIZE_Y - 1][z]; //riktig
-
-            faces[FRONT][x][z] = voxelData[x][0][z]; //riktig
-            faces[BACK][x][z] = voxelData[x][TILE_SIZE_Y - 1][z];    //riktig      
+            faces[FRONT][x][z] = voxelData[x][0][z];
+            faces[BACK][x][z] = voxelData[x][TILE_SIZE_Y - 1][z];     
         }
     }
     
     for (int y = 0; y < TILE_SIZE_Y; y++) {
         for (int z = 0; z < TILE_SIZE_Z; z++) {
-            // faces[LEFT][y][z] = voxelData[0][TILE_SIZE_Y - 1 - y][z]; //riktig
-            // faces[RIGHT][y][z] = voxelData[TILE_SIZE_X - 1][y][z]; //riktig
-            faces[LEFT][y][z] = voxelData[0][TILE_SIZE_Y - 1 - y][z]; //riktig
-            faces[RIGHT][y][z] = voxelData[TILE_SIZE_X - 1][TILE_SIZE_Y - 1 - y][z]; //???
+            faces[LEFT][y][z] = voxelData[0][TILE_SIZE_Y - 1 - y][z];
+            faces[RIGHT][y][z] = voxelData[TILE_SIZE_X - 1][TILE_SIZE_Y - 1 - y][z];
         }
     }
 
     for (int x = 0; x < TILE_SIZE_X; x++) {
         for (int y = 0; y < TILE_SIZE_Y; y++) {
-            // faces[TOP][x][y] = voxelData[x][y][TILE_SIZE_Z - 1];
-            // faces[BOTTOM][y][x] = voxelData[x][TILE_SIZE_Y - 1 - y][0];
-            faces[TOP][x][y] = voxelData[x][y][TILE_SIZE_Z - 1]; //riktig
-            faces[BOTTOM][x][y] = voxelData[x][y][0]; //riktig
+            faces[TOP][x][y] = voxelData[x][y][TILE_SIZE_Z - 1]; 
+            faces[BOTTOM][x][y] = voxelData[x][y][0]; 
         }
     }
 }
@@ -131,11 +119,18 @@ std::vector<std::vector<uint8_t>> findCenterElements(const std::vector<std::vect
 
 
 
-//other is tile you are matching with, dir is in which direction the other tile is in relation to this tile
-//will only match the center voxel 
-//TODO: try other ways of matchingFaces, for example check that a certain percentage of voxels are equal between the faces 
+
+
+
+/**
+ * Check if the @param other tile can be placed next to the this tile in @param dir direction. 
+ * 
+ * Contains logic for extracting the right faces according to @param dir,
+ * and will match based on a matching function called in the return statement.  
+ * 
+ * @return true if the faces are matching, false if not
+*/
 bool Tile::matchFaces(const Tile& other, Direction dir) {
-    //check if faces[] is populated???
 
     std::vector<std::vector<uint8_t>> face = this->faces[dir];
     std::vector<std::vector<uint8_t>> otherFace;
@@ -166,23 +161,12 @@ bool Tile::matchFaces(const Tile& other, Direction dir) {
         break;
     }
     
-    //maybe not necessary due to the TILE_SIZE_X, Y and Z?
     if (face.size() != otherFace.size()) {
         return false;
     }
     if (face[0].size() != otherFace[0].size()) {
         return false;
     }
-    
-    
-    // std::cout << "\ntrying to match face\n\n";
-    // this->printFace(static_cast<Direction>(dir));
-    // std::cout << "\nwith\n\n";
-    // ::printFace(otherFace);
-    // std::cout << std::endl;
-     
-
-
 
     return matchAllElements(face, otherFace);
 }
@@ -196,20 +180,11 @@ bool Tile::matchCenterElements(std::vector<std::vector<uint8_t>> face, std::vect
 
     for (size_t x = 0; x < numRows; x++) {
         for (size_t y = 0; y < numCols; y++) {
-            //std::cout << "\ncenter: " << static_cast<int>(center[x][y]) << "\nother center: " << static_cast<int>(otherCenter[numRows - 1 - x][y]) << std::endl;
-            // if (center[x][y] != otherCenter[numRows - 1 - x][y]) {
-            //     //std::cout << "\n but return false... \n";
-            //     return false;
-            // }
             if (center[x][y] != otherCenter[x][y]) {
-                //std::cout << "\n but return false... \n";
                 return false;
             }
         }
     }
-
-    
-    //std::cout << "\n and return true!\n";
     return true;
 }
 
@@ -223,11 +198,6 @@ bool Tile::matchAllElements(std::vector<std::vector<uint8_t>> face, std::vector<
 
     for (size_t x = 0; x < numRows; x++) {
         for (size_t y = 0; y < numCols; y++) {
-            //std::cout << "\ncenter: " << static_cast<int>(center[x][y]) << "\nother center: " << static_cast<int>(otherCenter[numRows - 1 - x][y]) << std::endl;
-            // if (center[x][y] != otherCenter[numRows - 1 - x][y]) {
-            //     //std::cout << "\n but return false... \n";
-            //     return false;
-            // }
             if (face[x][y] != otherFace[x][y]) {
                 errorCount++;
                 if (errorCount > allowedErrorCount) {
@@ -240,7 +210,6 @@ bool Tile::matchAllElements(std::vector<std::vector<uint8_t>> face, std::vector<
 }
 
 
-//this method should probably be static as well.....
 void Tile::setAdjacencyConstraints() {
     for (int dir = FRONT; dir < NUM_DIRECTIONS; dir++) {
         adjacencyConstraints[static_cast<Direction>(dir)] = std::unordered_set<const Tile*>();
@@ -255,7 +224,6 @@ void Tile::setAdjacencyConstraints() {
         }
     }
 }
-
 
 
 
