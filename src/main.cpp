@@ -8,26 +8,45 @@
 
 
 
-std::vector<Tile*> initRiverTiles() {
-    Vector3D<uint8_t> data = readVoxFile("vox_tiles/simple_shapes/wall_inner_corner_ground.vox");
-    Tile tile{"", data};
-    data.rotateClockwise(1);
-    Tile tile_r1{"", data};
-    data.rotateClockwise(1);
-    Tile tile_r2{"", data};
-    data.rotateClockwise(1);
-    Tile tile_r3{"", data};
+// std::vector<Tile*> initRiverTiles() {
+//     Vector3D<uint8_t> data = readVoxFile("vox_tiles/simple_shapes/wall_inner_corner_ground.vox");
+//     Tile tile{"", data};
+//     data.rotateClockwise(1);
+//     Tile tile_r1{"", data};
+//     data.rotateClockwise(1);
+//     Tile tile_r2{"", data};
+//     data.rotateClockwise(1);
+//     Tile tile_r3{"", data};
 
 
-    Vector3D<uint8_t> otherData = readVoxFile("vox_tiles/simple_shapes/wall_outer_corner_ground.vox");
-    Tile otherTile{"", otherData};
-    otherData.rotateClockwise(1);
-    Tile otherTile_r1{"", otherData};
-    otherData.rotateClockwise(1);
-    Tile otherTile_r2{"", otherData};
-    otherData.rotateClockwise(1);
-    Tile otherTile_r3{"", otherData};  
+//     Vector3D<uint8_t> otherData = readVoxFile("vox_tiles/simple_shapes/wall_outer_corner_ground.vox");
+//     Tile otherTile{"", otherData};
+//     otherData.rotateClockwise(1);
+//     Tile otherTile_r1{"", otherData};
+//     otherData.rotateClockwise(1);
+//     Tile otherTile_r2{"", otherData};
+//     otherData.rotateClockwise(1);
+//     Tile otherTile_r3{"", otherData};  
+// }
+
+
+std::vector<Tile*> initStairsTileSet() {
+    Vector3D<uint8_t> stair = readVoxFile("vox_tiles/stairs/big_stair.vox");
+    Tile stairTile{"stair", stair};
+    stairTile.addRotations(3);
+
+
+    Vector3D<uint8_t> empty = readVoxFile("vox_tiles/stairs/empty.vox");
+    Tile emptyTile{"empty", empty};
+
+
+    Vector3D<uint8_t> stair_top_corner = readVoxFile("vox_tiles/stairs/stair_top_corner.vox");
+    Tile stair_top_cornerTile{"stair_top_corner", stair_top_corner};
+    stair_top_cornerTile.addRotations(3);
+
+    return stairTile.getTileSet();
 }
+
 
 
 
@@ -134,74 +153,19 @@ int main() {
     stairTile.addRotations(3);
 
 
-
-
-
-    // stair.rotateClockwise(1);
-    // Tile stairTile_r1{"stair_r1", stair};
-    // stair.rotateClockwise(1);
-    // Tile stairTile_r2{"stair_r2", stair};
-    // stair.rotateClockwise(1); 
-    // Tile stairTile_r3{"stair_r3", stair};
-
-
     Vector3D<uint8_t> empty = readVoxFile("vox_tiles/stairs/empty.vox");
     Tile emptyTile{"empty", empty};
-
-    // Vector3D<uint8_t> stair_bottom_corner = readVoxFile("vox_tiles/stairs/stair_bottom_corner.vox");
-    // Tile stair_bottom_cornerTile{"stair_bottom_corner", stair_bottom_corner};
-    // stair_bottom_corner.rotateClockwise(1);
-    // Tile stair_bottom_cornerTile_r1{"stair_bottom_corner_r1", stair_bottom_corner};
-    // stair_bottom_corner.rotateClockwise(1);
-    // Tile stair_bottom_cornerTile_r2{"stair_bottom_corner_r2", stair_bottom_corner};
-    // stair_bottom_corner.rotateClockwise(1); 
-    // Tile stair_bottom_cornerTile_r3{"stair_bottom_corner_r3", stair_bottom_corner};
 
 
     Vector3D<uint8_t> stair_top_corner = readVoxFile("vox_tiles/stairs/stair_top_corner.vox");
     Tile stair_top_cornerTile{"stair_top_corner", stair_top_corner};
     stair_top_cornerTile.addRotations(3);
 
-    // stair_top_corner.rotateClockwise(1);
-    // Tile stair_top_cornerTile_r1{"stair_top_corner_r1", stair_top_corner};
-    // stair_top_corner.rotateClockwise(1);
-    // Tile stair_top_cornerTile_r2{"stair_top_corner_r2", stair_top_corner};
-    // stair_top_corner.rotateClockwise(1); 
-    // Tile stair_top_cornerTile_r3{"stair_top_corner_r3", stair_top_corner};
 
+    std::vector<Tile*> tileSet = emptyTile.getTileSet();
+    Wave wave{WAVE_GRID_SIZE_X, WAVE_GRID_SIZE_Y, WAVE_GRID_SIZE_Z, tileSet};
 
-    // Vector3D<uint8_t> straight_path = readVoxFile("vox_tiles/stairs/straight_path.vox");
-    // Tile straight_pathTile{"straight_path", straight_path};
-    // straight_path.rotateClockwise(1);
-    // Tile straight_pathTile_r1{"straight_path_r1", straight_path};
-    // straight_path.rotateClockwise(1);
-    // Tile straight_pathTile_r2{"straight_path_r2", straight_path};
-    // straight_path.rotateClockwise(1); 
-    // Tile straight_pathTile_r3{"straight_path_r3", straight_path};
-
-    // Vector3D<uint8_t> bendy_path = readVoxFile("vox_tiles/stairs/bendy_path.vox");
-    // Tile bendy_pathTile{"bendy_path", bendy_path};
-    // bendy_path.rotateClockwise(1);
-    // Tile bendy_pathTile_r1{"bendy_path_r1", bendy_path};
-    // bendy_path.rotateClockwise(1);
-    // Tile bendy_pathTile_r2{"bendy_path_r2", bendy_path};
-    // bendy_path.rotateClockwise(1); 
-    // Tile bendy_pathTile_r3{"bendy_path_r3", bendy_path};
-    
- 
-
-
-    std::vector<Tile*> tileOptions = emptyTile.getTileSet();
-    Wave wave{15,15, 15, emptyTile.getTileSet()};
-
-
-
-    while(wave.observe()) {        
-        std::cout << "\nobserving ... \n";
-        
-        
-    }
-    Vector3D<uint8_t> model = wave.assemble();
+    Vector3D<uint8_t> model = wave.run();
 
     writeVoxFile(model, "vox_tiles/output.vox");
     openInMagicaVoxel("C:/Users/sofie/OneDrive/Documents/master/WFC/vox_tiles/output.vox", magicaPath);

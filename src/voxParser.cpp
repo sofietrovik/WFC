@@ -42,7 +42,6 @@ void printBinary(const char* filePath, int numWords) {
 
     char data;
     int count = 0;
-
     int wordCount = 0;
 
 
@@ -56,12 +55,8 @@ void printBinary(const char* filePath, int numWords) {
             count = 0;
             wordCount++;
         }
-
-
     }
-
     file.close();
-
 }
 
 
@@ -97,20 +92,19 @@ Vector3D<uint8_t> readVoxFile(const char* filePath) {
             // std::cout << "num bytes of chunk content: " << static_cast<int>(numBytesChunkContent) << std::endl;
             // std::cout << "num bytes of children chunk content: " << static_cast<int>(numBytesChildrenChunkContent) << std::endl;
             break;
-/*         case CHUNK_ID_PACK:
-            uint32_t discard;
-            file.read(reinterpret_cast<char*>(&discard), sizeof(discard));
+         case CHUNK_ID_PACK:
+            // uint32_t discard;
+            // file.read(reinterpret_cast<char*>(&discard), sizeof(discard));
             
 
             std::cerr << "cannot handle vox files with several models \n"; 
-            break; */
+            break; 
 
         case CHUNK_ID_SIZE:
             // std::cout << "SIZE chunk \n";
 
             // std::cout << "num bytes of chunk content: " << static_cast<int>(numBytesChunkContent) << std::endl;
             // std::cout << "num bytes of children chunk content: " << static_cast<int>(numBytesChildrenChunkContent) << std::endl;
-
 
 
             uint32_t sizeX;
@@ -178,10 +172,6 @@ Vector3D<uint8_t> readVoxFile(const char* filePath) {
     return voxelData;
 }
 
-/* void writeChar(std::ofstream file, char) {
-
-} */
-
 
 
 
@@ -208,7 +198,6 @@ void writeChar(std::ofstream& file, const char c) {
 //counts solid voxels
 int countVoxels(const Vector3D<uint8_t>& voxelData) {
     int count = 0;
-
 
     for (uint8_t i = 0; i < voxelData.dimX(); i++) {
         for (uint8_t j = 0; j < voxelData.dimY(); j++) {
@@ -261,8 +250,6 @@ void writeVoxFile(const Vector3D<uint8_t>& voxelData, const char* filePath) {
         return ;
     }
 
-
-
     //--------------- vox file header ---------------
     writeWord(file, "VOX ");    //header ID
     writeInt(file, 200);        //file version
@@ -274,6 +261,7 @@ void writeVoxFile(const Vector3D<uint8_t>& voxelData, const char* filePath) {
     writeWord(file, "MAIN");                        //chunk ID
     writeInt(file, 0);                              //num bytes of chunk content
     writeInt(file, calculateMAINchunkSize(voxelData));  //num bytes of children chunk content
+
 
     
     //--------------- SIZE chunk ---------------
@@ -301,7 +289,6 @@ void writeVoxFile(const Vector3D<uint8_t>& voxelData, const char* filePath) {
     for (uint8_t i = 0; i < voxelData.dimX(); ++i) {
         for (uint8_t j = 0; j < voxelData.dimY(); ++j) {
             for (uint8_t k = 0; k < voxelData.dimZ(); ++k) {
-                //count++;
                 uint8_t value = voxelData[i][j][k];
                 if (value != 0) {
                     writeChar(file, i);
@@ -313,10 +300,7 @@ void writeVoxFile(const Vector3D<uint8_t>& voxelData, const char* filePath) {
         }
     } 
 
-
     file.close();
-
-
 }
 
 void openInMagicaVoxel(const std::string& filePath, const std::string& magicaPath) {

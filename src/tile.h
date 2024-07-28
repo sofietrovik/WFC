@@ -25,6 +25,7 @@ class Tile {
     public:
 
         Tile (std::string name, const Vector3D<uint8_t>& voxelData);
+        ~Tile();
 
         void printData() const;
         void printFace(Direction dir) const;

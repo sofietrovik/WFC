@@ -1,12 +1,23 @@
-#compiler
+# Compiler
 CXX = g++
+
 # Compiler flags
-CXXFLAGS = -std=c++11 -Wall -Wextra -pedantic -Iinclude -Isrc -g 
+CXXFLAGS = -std=c++11 -Wall -Wextra -pedantic -Iinclude -Isrc -g
 
 # Source files
 SRCS = src/wave.cpp src/tile.cpp src/cell.cpp src/main.cpp src/voxParser.cpp src/vector3D.cpp
+
+# Object files directory
+OBJDIR = obj
+# Dependency files directory
+DEPDIR = deps
+
 # Object files
-OBJS = $(SRCS:.cpp=.o)
+OBJS = $(SRCS:src/%.cpp=$(OBJDIR)/%.o)
+
+# Dependency files
+DEPS = $(SRCS:src/%.cpp=$(DEPDIR)/%.d)
+
 # Executable
 EXEC = wfc
 
@@ -14,17 +25,37 @@ EXEC = wfc
 $(EXEC): $(OBJS)
 	$(CXX) $(CXXFLAGS) $(OBJS) -o $(EXEC)
 
-# Build rule for object files
-%.o: %.cpp
-	$(CXX) $(CXXFLAGS) -c $< -o $@
-
-# Clean rule
-clean:
+# Create directories if they do not exist
+$(OBJDIR):
 ifeq ($(OS),Windows_NT)
-	del $(subst /,\,$(OBJS)) $(EXEC).exe
+	if not exist $(OBJDIR) mkdir $(OBJDIR)
 else
-	rm -f $(OBJS) $(EXEC)
+	mkdir -p $(OBJDIR)
 endif
 
+$(DEPDIR):
+ifeq ($(OS),Windows_NT)
+	if not exist $(DEPDIR) mkdir $(DEPDIR)
+else
+	mkdir -p $(DEPDIR)
+endif
+
+# Build rule for object files and generate dependency files
+$(OBJDIR)/%.o: src/%.cpp | $(OBJDIR) $(DEPDIR)
+	$(CXX) $(CXXFLAGS) -MMD -MP -c $< -o $@ -MF $(DEPDIR)/$*.d
+
+# Include the dependency files
+-include $(DEPS)
+
+# Simplified clean rule
+clean:
+ifeq ($(OS),Windows_NT)
+	del /Q $(subst /,\,$(OBJDIR))\* $(subst /,\,$(DEPDIR))\* $(EXEC).exe
+	rmdir /Q $(subst /,\,$(OBJDIR)) $(subst /,\,$(DEPDIR))
+else
+	rm -rf $(OBJDIR) $(DEPDIR) $(EXEC)
+endif
+
+# Run rule
 run: $(EXEC)
 	./$(EXEC)

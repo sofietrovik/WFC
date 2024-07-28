@@ -224,6 +224,16 @@ void Tile::setAdjacencyConstraints() {
     }
 }
 
-
-
 std::vector<Tile*> Tile::tileSet;
+
+//kinda... hacky
+Tile::~Tile() {
+    for (auto tile : tileSet) {
+        if (tile->name == (this->name + "_r1")||
+            tile->name == (this->name + "_r2")||
+            tile->name == (this->name + "_r3")||
+            tile->name == (this->name + "_r4")) {
+            delete tile;
+        }
+    } 
+}

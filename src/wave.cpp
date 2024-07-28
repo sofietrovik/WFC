@@ -272,13 +272,13 @@ Vector3D<uint8_t> Wave::assemble() {
 }
 
 
-// Vector3D<uint8_t> Wave::run() {
-//     while(observe()) {        
-//         std::cout << "\nobserving ... \n";
-//     }
+Vector3D<uint8_t> Wave::run() {
+    while(observe()) {        
+        std::cout << "\nobserving ... \n";
+    }
 
-//     return assemble();    
-// }
+    return assemble();    
+}
 
 
 Wave::~Wave() {
