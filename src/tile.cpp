@@ -8,12 +8,12 @@ Tile::Tile (std::string name, const Vector3D<uint8_t>& voxelData)
     }
     
     extractFaces();
-    listOfTiles.push_back(this);;
+    tileSet.push_back(this);;
 }
 
 void Tile::addRotations(int numRotations) const{
     Vector3D<uint8_t> newData = voxelData;
-    
+
     for(int i = 0; i < numRotations; i++) {
         newData.rotateClockwise(1);
         new Tile{name + "_r" + static_cast<char>(i), newData};
@@ -214,7 +214,7 @@ void Tile::setAdjacencyConstraints() {
         adjacencyConstraints[static_cast<Direction>(dir)] = std::unordered_set<const Tile*>();
     }
 
-    for (const Tile* tile : listOfTiles) {
+    for (const Tile* tile : tileSet) {
         for (int dir = FRONT; dir < NUM_DIRECTIONS; dir++) {
             if(this->matchFaces(*tile, static_cast<Direction>(dir)) == false) {
                 continue;
@@ -226,4 +226,4 @@ void Tile::setAdjacencyConstraints() {
 
 
 
-std::vector<Tile*> Tile::listOfTiles;
+std::vector<Tile*> Tile::tileSet;

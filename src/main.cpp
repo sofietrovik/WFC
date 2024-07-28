@@ -191,8 +191,8 @@ int main() {
  
 
 
-    std::vector<Tile*> tileOptions = emptyTile.getListOfTiles();
-    Wave wave{15,15, 15, emptyTile.getListOfTiles()};
+    std::vector<Tile*> tileOptions = emptyTile.getTileSet();
+    Wave wave{15,15, 15, emptyTile.getTileSet()};
 
 
 

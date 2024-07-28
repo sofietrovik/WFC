@@ -261,7 +261,7 @@ Vector3D<uint8_t> Wave::assemble() {
                 for (int x = 0; x < TILE_SIZE_X; x++) {
                     for (int y = 0; y < TILE_SIZE_Y; y++) {
                         for (int z = 0; z < TILE_SIZE_Z; z++) {
-                            finalModel[i*TILE_SIZE_X + x][j*TILE_SIZE_Y + y][k*TILE_SIZE_Z + z] = tile->voxelData[x][y][z];
+                            finalModel[i*TILE_SIZE_X + x][j*TILE_SIZE_Y + y][k*TILE_SIZE_Z + z] = tile->getVoxelData(x, y, z);
                         }
                     }
                 }    
@@ -270,6 +270,16 @@ Vector3D<uint8_t> Wave::assemble() {
     }
     return finalModel;
 }
+
+
+// Vector3D<uint8_t> Wave::run() {
+//     while(observe()) {        
+//         std::cout << "\nobserving ... \n";
+//     }
+
+//     return assemble();    
+// }
+
 
 Wave::~Wave() {
     size_t gridWidth = grid.dimX();

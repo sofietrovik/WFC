@@ -23,9 +23,6 @@ const double ERROR_PERCENTAGE_THRESHOLD = 0;
 
 class Tile {
     public:
-        std::string name;
-        Vector3D<uint8_t> voxelData;
-        std::vector<std::vector<uint8_t>> faces[6]; //this is unneccessary data after the adjacency constraints are populated... should remove it
 
         Tile (std::string name, const Vector3D<uint8_t>& voxelData);
 
@@ -36,19 +33,28 @@ class Tile {
         
         void addRotations(int numRotations) const;
         void setAdjacencyConstraints();
+
         
 
         inline const std::unordered_set<const Tile*>& getAdjacencyConstraints(Direction dir) const {
             return adjacencyConstraints.at(dir);
         }
 
-        inline std::vector<Tile*> getListOfTiles() const {
-            return listOfTiles;
+        inline std::vector<Tile*> getTileSet() const {
+            return tileSet;
+        }        
+        
+        inline uint8_t getVoxelData(int x, int y, int z) const {
+            return voxelData[x][y][z];
         }
 
 
     private:
-        static std::vector<Tile*> listOfTiles;
+        std::string name;
+        Vector3D<uint8_t> voxelData;
+        std::vector<std::vector<uint8_t>> faces[6]; 
+
+        static std::vector<Tile*> tileSet;
         std::unordered_map<Direction, std::unordered_set<const Tile*>> adjacencyConstraints;
 
 
@@ -56,7 +62,5 @@ class Tile {
         bool matchCenterElements(std::vector<std::vector<uint8_t>> face, std::vector<std::vector<uint8_t>> otherFace);
         bool matchAllElements(std::vector<std::vector<uint8_t>> face, std::vector<std::vector<uint8_t>> otherFace);
         void extractFaces();
-        
-
 };
 

@@ -5,31 +5,39 @@
 #include <random>
 #include <algorithm>
 
+
+//forward declaration of Wave to make it a friend class
+class Wave;
+
 class Cell {
     public:
-        Cell(std::vector<Tile*> tileOptions, int x, int y, int z);
-        bool collapse(); 
         bool isCollapsed() const;
-        std::vector<Tile*> tileOptions;
-        bool updateTileOptions(std::vector<Tile*> allowedTileOptions);
-
         int getEntropy() const;
         int getX() const;
         int getY() const;
         int getZ() const;
 
+        //enforce composition relationship with Wave class
+        Cell() = delete;
+
     private:
-        
-        bool collapsed;
-        int entropy;
+        // Private constructor to prevent direct creation
+        Cell(std::vector<Tile*> tileOptions, int x, int y, int z);
 
         //coordinates in wave grid
         int x;
         int y;
-        int z;
+        int z;   
 
+        bool collapsed;
+        int entropy;
+        std::vector<Tile*> tileOptions;
+
+        bool collapse();  
         void updateEntropy();
-        void print();
+        bool updateTileOptions(std::vector<Tile*> allowedTileOptions);
+
+        friend class Wave;
 };
 
 
