@@ -12,13 +12,13 @@ class Wave {
         bool observe();
         Vector3D<uint8_t> assemble();
         void printEntropy();
-
+        void propagate(Cell* cell, int depth);
     private:
         Vector3D<Cell*> grid;
 
         Cell* pickRandomCellWithLowestEntropy();
         Cell* pickRandomCell();
-        void propagateCollapse(Cell* cell, int depth);
+        
         Cell* getAdjacentCell(Cell* cell, Direction dir);
 
 

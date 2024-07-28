@@ -29,19 +29,12 @@ class Tile {
 
         Tile (std::string name, const Vector3D<uint8_t>& voxelData);
 
-        void printData();
+        void printData() const;
         void printFace(Direction dir) const;
         void printAllFaces() const;
 
-        void extractFaces();
-
-        void addRotations(); //not sure how to implement this one and keeping scopes
-
-
-
-        bool matchFaces(const Tile& other, Direction dir);
-        bool matchCenterElements(std::vector<std::vector<uint8_t>> face, std::vector<std::vector<uint8_t>> otherFace);
-        bool matchAllElements(std::vector<std::vector<uint8_t>> face, std::vector<std::vector<uint8_t>> otherFace);
+        
+        void addRotations(int numRotations) const;
         void setAdjacencyConstraints();
         
 
@@ -57,7 +50,12 @@ class Tile {
     private:
         static std::vector<Tile*> listOfTiles;
         std::unordered_map<Direction, std::unordered_set<const Tile*>> adjacencyConstraints;
-        //void extractFaces();
+
+
+        bool matchFaces(const Tile& other, Direction dir);
+        bool matchCenterElements(std::vector<std::vector<uint8_t>> face, std::vector<std::vector<uint8_t>> otherFace);
+        bool matchAllElements(std::vector<std::vector<uint8_t>> face, std::vector<std::vector<uint8_t>> otherFace);
+        void extractFaces();
         
 
 };

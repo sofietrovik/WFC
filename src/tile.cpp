@@ -11,15 +11,14 @@ Tile::Tile (std::string name, const Vector3D<uint8_t>& voxelData)
     listOfTiles.push_back(this);;
 }
 
-void Tile::addRotations() {
+void Tile::addRotations(int numRotations) const{
     Vector3D<uint8_t> newData = voxelData;
-    newData.rotateClockwise(1);
-    new Tile{name + "_r1", newData};
+    
+    for(int i = 0; i < numRotations; i++) {
+        newData.rotateClockwise(1);
+        new Tile{name + "_r" + static_cast<char>(i), newData};
+    }
 }
-
-
-
-
 
 
 void Tile::printData() const{

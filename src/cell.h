@@ -12,9 +12,7 @@ class Cell {
         bool isCollapsed() const;
         std::vector<Tile*> tileOptions;
         bool updateTileOptions(std::vector<Tile*> allowedTileOptions);
-        int x;
-        int y;
-        int z;
+
         int getEntropy() const;
         int getX() const;
         int getY() const;
@@ -25,15 +23,14 @@ class Cell {
         bool collapsed;
         int entropy;
 
-        //coordinates in wave-grid
-
+        //coordinates in wave grid
+        int x;
+        int y;
+        int z;
 
         void updateEntropy();
-        
-        
         void print();
 };
 
 
 
-// maybe use unordered set for tileOptions? yeah that is a good idea

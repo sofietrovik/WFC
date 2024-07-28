@@ -1,8 +1,8 @@
 #include "wave.h"
 
-Wave::Wave(int gridWidth,  int gridDepth, int gridHeight, std::vector<Tile*> tiles) {
+Wave::Wave(int gridWidth,  int gridDepth, int gridHeight, std::vector<Tile*> tileSet) {
     
-    for (auto tile:tiles) {
+    for (auto tile:tileSet) {
         tile->setAdjacencyConstraints();
     }
     //TODO: legg inn sjekk for width, depth og height større enn 1?
@@ -10,13 +10,10 @@ Wave::Wave(int gridWidth,  int gridDepth, int gridHeight, std::vector<Tile*> til
     grid.resize(gridWidth, gridDepth, gridHeight);
 
     //initialize 3d grid of cells
-    for (int x = 0; x < gridWidth; x++)
-    {
-        for (int y = 0; y < gridDepth; y++)
-        {
-            for (int z = 0; z < gridHeight; z++)
-            {
-                Cell *cellPtr = new Cell{tiles, x, y, z};
+    for (int x = 0; x < gridWidth; x++) {
+        for (int y = 0; y < gridDepth; y++) {
+            for (int z = 0; z < gridHeight; z++) {
+                Cell *cellPtr = new Cell{tileSet, x, y, z};
                 grid[x][y][z] = cellPtr;
             }
         }
@@ -24,11 +21,13 @@ Wave::Wave(int gridWidth,  int gridDepth, int gridHeight, std::vector<Tile*> til
 }
 
 
-//collapse a cell in the wave-grid
-//return true if a cell was collapsed
-//return false if all cells are collapsed
+
+/**
+ * Pick and collapse a cell in the wave grid
+ * 
+ * @return true if a cell was collapsed, false if not (all cells are collapsed)
+*/
 bool Wave::observe() {
-    //randomly choose a non-collapsed cell
     Cell* randomCell = pickRandomCellWithLowestEntropy();
 
     if(randomCell == nullptr) {
@@ -37,28 +36,29 @@ bool Wave::observe() {
     }
 
     if(!randomCell->collapse()) {
-        //was not able to finish grid
+        //a cell has no tileoptions left
         std::cerr << "\n\n not able to finish \n\n";
-        return false;
+        exit(1);
     }
 
-    propagateCollapse(randomCell, WAVE_PROPAGATION_DEPTH);
+    propagate(randomCell, WAVE_PROPAGATION_DEPTH);
 
     return true;
 }
-
+ 
 
 
 /**
- * The function will go through all the six adjacent cells 
- * of the @param cell and remove invalid tile options
+ * The function will go through all the six adjacent cells of the cell input and 
+ * remove invalid tile options based on the tile options of the calling cell
  * 
- * It will be recursivly called for the adajacent cells if 
- * their tileOptions were updated, and quit if the recursiveness reaches a certain depth
+ * It will be recursivly called for the adjacent cells if their tileOptions were
+ * updated, and quit if the recursiveness reaches a certain depth
  * 
- * @param depth depth of the propagation in terms of number of cells
+ * @param cell cell object that has had its tileOptions updated.
+ * @param depth maximum depth of the propagation in terms of number of cells traversed from the input cell
 */
-void Wave::propagateCollapse(Cell* cell, int depth) {
+void Wave::propagate(Cell* cell, int depth) {
     depth = depth - 1;
     if (depth < 0) {
         return;
@@ -98,7 +98,7 @@ void Wave::propagateCollapse(Cell* cell, int depth) {
         bool updated = adjacentCell->updateTileOptions(allowedTileOptions);
 
         if (updated) {
-            propagateCollapse(adjacentCell, depth);
+            propagate(adjacentCell, depth);
         }
     }
 }
@@ -108,28 +108,28 @@ void Wave::propagateCollapse(Cell* cell, int depth) {
 Cell* Wave::getAdjacentCell(Cell* cell, Direction dir) {
     switch (dir) {
         case TOP:
-            if (cell->z + 1 < grid.dimZ())
-                return grid[cell->x][cell->y][cell->z + 1];
+            if (cell->getZ() + 1 < grid.dimZ())
+                return grid[cell->getX()][cell->getY()][cell->getZ() + 1];
             break;
         case BOTTOM:
-            if (cell->z - 1 >= 0)
-                return grid[cell->x][cell->y][cell->z - 1];
+            if (cell->getZ() - 1 >= 0)
+                return grid[cell->getX()][cell->getY()][cell->getZ() - 1];
             break;
         case LEFT:
-            if (cell->x - 1 >= 0) 
-                return grid[cell->x - 1][cell->y][cell->z];
+            if (cell->getX() - 1 >= 0) 
+                return grid[cell->getX() - 1][cell->getY()][cell->getZ()];
             break;
         case RIGHT:
-            if (cell->x + 1 < grid.dimX())
-                return grid[cell->x + 1][cell->y][cell->z];
+            if (cell->getX() + 1 < grid.dimX())
+                return grid[cell->getX() + 1][cell->getY()][cell->getZ()];
             break;
         case BACK:
-            if (cell->y + 1 < grid.dimY())
-                return grid[cell->x][cell->y + 1][cell->z];
+            if (cell->getY() + 1 < grid.dimY())
+                return grid[cell->getX()][cell->getY() + 1][cell->getZ()];
             break;
         case FRONT:
-            if (cell->y - 1 >= 0) 
-                return grid[cell->x][cell->y - 1][cell->z];
+            if (cell->getY() - 1 >= 0) 
+                return grid[cell->getX()][cell->getY() - 1][cell->getZ()];
             break;
         default:
             return nullptr;
@@ -152,14 +152,12 @@ void Wave::printEntropy() {
     }    
 }
 
-/**
+/** 
+ * Picks a random cell from the uncollapsed cells with the lowest entropy in the wave grid.
  * 
  * 
- * 
- * @re
+ * @return The chosen cell
 */
-
-
 Cell* Wave::pickRandomCellWithLowestEntropy() {
 
     std::vector<Cell*> flattenedGrid = grid.flatten();
@@ -236,7 +234,7 @@ Cell* Wave::pickRandomCell() {
 }
 
 /**
- * Go through all the cells in the grid. Construct a new vector3D by copying 
+ * Go through all the cells in the grid. Construct a new vector3D and copying 
  * the data from the tiles the cells collapsed into.
  * 
  * 
@@ -277,12 +275,10 @@ Wave::~Wave() {
     size_t gridWidth = grid.dimX();
     size_t gridDepth = grid.dimY();
     size_t gridHeight = grid.dimZ();
-    for (size_t x = 0; x < gridWidth; x++)
-    {
-        for (size_t y = 0; y < gridDepth; y++)
-        {
-            for (size_t z = 0; z < gridHeight; z++)
-            {
+
+    for (size_t x = 0; x < gridWidth; x++) {
+        for (size_t y = 0; y < gridDepth; y++) {
+            for (size_t z = 0; z < gridHeight; z++) {
                 delete grid[x][y][z];
             }
         }

@@ -18,10 +18,7 @@ bool isValidVoxFile(std::ifstream& stream);
 
 Vector3D<uint8_t> readVoxFile(const char* filePath); 
 
-
-
 void writeVoxFile(const Vector3D<uint8_t>& voxelData, const char* filePath);
-
 
 void printBinary(const char* filePath, int numWords);
 

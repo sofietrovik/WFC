@@ -131,12 +131,18 @@ int main() {
 
     Vector3D<uint8_t> stair = readVoxFile("vox_tiles/stairs/big_stair.vox");
     Tile stairTile{"stair", stair};
-    stair.rotateClockwise(1);
-    Tile stairTile_r1{"stair_r1", stair};
-    stair.rotateClockwise(1);
-    Tile stairTile_r2{"stair_r2", stair};
-    stair.rotateClockwise(1); 
-    Tile stairTile_r3{"stair_r3", stair};
+    stairTile.addRotations(3);
+
+
+
+
+
+    // stair.rotateClockwise(1);
+    // Tile stairTile_r1{"stair_r1", stair};
+    // stair.rotateClockwise(1);
+    // Tile stairTile_r2{"stair_r2", stair};
+    // stair.rotateClockwise(1); 
+    // Tile stairTile_r3{"stair_r3", stair};
 
 
     Vector3D<uint8_t> empty = readVoxFile("vox_tiles/stairs/empty.vox");
@@ -154,12 +160,14 @@ int main() {
 
     Vector3D<uint8_t> stair_top_corner = readVoxFile("vox_tiles/stairs/stair_top_corner.vox");
     Tile stair_top_cornerTile{"stair_top_corner", stair_top_corner};
-    stair_top_corner.rotateClockwise(1);
-    Tile stair_top_cornerTile_r1{"stair_top_corner_r1", stair_top_corner};
-    stair_top_corner.rotateClockwise(1);
-    Tile stair_top_cornerTile_r2{"stair_top_corner_r2", stair_top_corner};
-    stair_top_corner.rotateClockwise(1); 
-    Tile stair_top_cornerTile_r3{"stair_top_corner_r3", stair_top_corner};
+    stair_top_cornerTile.addRotations(3);
+
+    // stair_top_corner.rotateClockwise(1);
+    // Tile stair_top_cornerTile_r1{"stair_top_corner_r1", stair_top_corner};
+    // stair_top_corner.rotateClockwise(1);
+    // Tile stair_top_cornerTile_r2{"stair_top_corner_r2", stair_top_corner};
+    // stair_top_corner.rotateClockwise(1); 
+    // Tile stair_top_cornerTile_r3{"stair_top_corner_r3", stair_top_corner};
 
 
     // Vector3D<uint8_t> straight_path = readVoxFile("vox_tiles/stairs/straight_path.vox");
@@ -191,15 +199,11 @@ int main() {
     while(wave.observe()) {        
         std::cout << "\nobserving ... \n";
         
+        
     }
-
     Vector3D<uint8_t> model = wave.assemble();
 
     writeVoxFile(model, "vox_tiles/output.vox");
-    
-
-
-
     openInMagicaVoxel("C:/Users/sofie/OneDrive/Documents/master/WFC/vox_tiles/output.vox", magicaPath);
 
     return 0;

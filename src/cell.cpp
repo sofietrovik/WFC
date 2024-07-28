@@ -18,8 +18,6 @@ bool Cell::collapse() {
 
     tileOptions = {tileOptions[randomIndex]};
 
-    //collapsed = true;
-    //entropy = 1;
     updateEntropy();
     
     return true;
@@ -35,7 +33,7 @@ void Cell::updateEntropy() {
     //a cell has been collapsed by propagation of another collapse
     if (entropy == 1) {
         collapsed = true;
-        std::cout << "\n x: " << x << "y: " << y << "z: " << z << " has been collapsed \n"; 
+        //std::cout << "\n x: " << x << "y: " << y << "z: " << z << " has been collapsed \n"; 
     }
 }
 
@@ -63,11 +61,7 @@ int Cell::getZ() const {
  * @return 'true' if the number of tiles in tileOptions was reduced 'false' if it was not  
 */
 bool Cell::updateTileOptions(std::vector<Tile*> allowedTileOptions) {
-
-    
     //TODO: improve by sorting tileOptions before initializing, so that I can binary_search?
-
-   
 
     tileOptions.erase(
         std::remove_if(
@@ -87,7 +81,7 @@ bool Cell::updateTileOptions(std::vector<Tile*> allowedTileOptions) {
     }
 
     //check if the entropy has changed (check if some elements have been removed from tile options)
-    if (entropy != tileOptions.size()) {
+    if (entropy != static_cast<int>(tileOptions.size())) {
         updateEntropy();
         return true;
     }

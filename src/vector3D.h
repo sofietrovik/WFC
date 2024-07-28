@@ -43,18 +43,12 @@ public:
     }
 
 
-    void print() {
-        size_t dim_Z = dimZ();
-        size_t dim_Y = dimY();
-        size_t dim_X = dimX();
-
+    void print() const{
         std::cout << std::endl;
 
-
-        for (size_t i = 0; i < dim_Z; ++i) {
-            for (size_t j = 0; j < dim_Y; ++j) {
-                for (size_t k = 0; k < dim_X; ++k) {
-                    //count++;
+        for (size_t i = 0; i < dimZ(); ++i) {
+            for (size_t j = 0; j < dimY(); ++j) {
+                for (size_t k = 0; k < dimX(); ++k) {
                     if (data[k][j][i] != 0) {
                         std::cout << "X ";
                     } else {
@@ -76,22 +70,6 @@ public:
                 row.resize(dimZ);
             }
         }
-    }
-
-    //this is bad practice in a template class....
-    void mark() {
-        // size_t dim_Z = dimZ();
-        // size_t dim_Y = dimY();
-        // size_t dim_X = dimX();
-
-
-        for (size_t i = 0; i < dimZ(); ++i) {
-            for (size_t j = 0; j < dimY(); ++j) {
-                for (size_t k = 0; k < dimX(); ++k) {
-                    data[k][j][i] = 72; //color for red in default MagicaVoxel palette
-                }
-            }
-        }        
     }
 
     //rotates the data numRotations x 90 degrees clockwise along the z-axis
