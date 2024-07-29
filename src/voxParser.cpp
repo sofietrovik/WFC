@@ -304,7 +304,13 @@ void writeVoxFile(const Vector3D<uint8_t>& voxelData, const char* filePath) {
 }
 
 void openInMagicaVoxel(const std::string& filePath, const std::string& magicaPath) {
+
+#ifdef _WIN32
     std::string command = "powershell.exe -Command \"& '" + magicaPath + "' '" + filePath + "'\"";
+#else
+    std::string command = magicaPath + " " + filePath;
+#endif
+
     int result = std::system(command.c_str());
     if (result != 0) {
         std::cerr << "Failed to open MagicaVoxel: " << result << std::endl;

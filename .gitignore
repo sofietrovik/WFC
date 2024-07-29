@@ -1,5 +1,4 @@
-*.o
 *.exe
 .vscode/
-.deps/
-.obj/
+deps/
+obj/

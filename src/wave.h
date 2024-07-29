@@ -4,8 +4,8 @@
 //propagation depth should be about double of the largest grid size
 const int WAVE_PROPAGATION_DEPTH = 30;
 
-const int WAVE_GRID_SIZE_X = 10;
-const int WAVE_GRID_SIZE_Y = 10;
+const int WAVE_GRID_SIZE_X = 15;
+const int WAVE_GRID_SIZE_Y = 15;
 const int WAVE_GRID_SIZE_Z = 10;
 
 
