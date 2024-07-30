@@ -16,7 +16,7 @@ void Tile::addRotations(int numRotations) const{
 
     for(int i = 0; i < numRotations; i++) {
         newData.rotateClockwise(1);
-        new Tile{name + "_r" + static_cast<char>(i), newData};
+        new Tile{name + "_r" + std::to_string(i), newData};
     }
 }
 
@@ -56,6 +56,18 @@ void Tile::printAllFaces() const {
         std::cout << "\nface dir: " << dir << std::endl;
         printFace(static_cast<Direction>(dir));
     }
+}
+
+void Tile::printAdjacencyConstraints() const {
+    std::cout << "\n\nfor tile " << name << ", the adjacency constraints are:";
+    for (int dir = FRONT; dir < NUM_DIRECTIONS; dir++) {
+        auto tiles = adjacencyConstraints.at(static_cast<Direction>(dir));
+        std::cout << "\ndirection " << dir << ": ";
+        for (auto tile : tiles) {
+            std::cout << tile->name << ", ";
+        }
+    }
+    std::cout << "\n\n";
 }
 
 

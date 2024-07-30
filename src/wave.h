@@ -1,12 +1,19 @@
 #pragma once
 #include "cell.h"
+#include "voxParser.h"
+#include <string>
+#include <cstdint>
 
-//propagation depth should be about double of the largest grid size
-const int WAVE_PROPAGATION_DEPTH = 30;
+//propagation depth should probably be about double of the largest grid size
+const int WAVE_PROPAGATION_DEPTH = 24;
 
-const int WAVE_GRID_SIZE_X = 15;
-const int WAVE_GRID_SIZE_Y = 15;
-const int WAVE_GRID_SIZE_Z = 10;
+const int WAVE_GRID_SIZE_X = 12;
+const int WAVE_GRID_SIZE_Y = 12;
+const int WAVE_GRID_SIZE_Z = 12;
+
+
+//Capture intermediate models
+const bool LOGGING = false; 
 
 
 class Wave {
@@ -20,9 +27,9 @@ class Wave {
     private:
         Vector3D<Cell*> grid;  
 
-        bool observe();
+        bool observe(std::string baseFilePath, int& coun);
         void propagate(Cell* cell, int depth);
-        Vector3D<uint8_t> assemble();
+        Vector3D<uint8_t> assemble() const;
 
         Cell* pickRandomCellWithLowestEntropy();
         Cell* pickRandomCell();

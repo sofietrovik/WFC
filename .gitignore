@@ -2,3 +2,4 @@
 .vscode/
 deps/
 obj/
+vox_tiles/output_log/

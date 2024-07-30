@@ -1,13 +1,14 @@
 #pragma once
 
 
-//#include "Vector3D.h"
 #include <iostream>
 #include <cstdint>
-#include "voxParser.h"
 #include <iomanip> 
 #include <unordered_map>
 #include <unordered_set>
+#include <string>
+#include "voxParser.h"
+
 
 
 const int TILE_SIZE_X = 16;
@@ -30,6 +31,7 @@ class Tile {
         void printData() const;
         void printFace(Direction dir) const;
         void printAllFaces() const;
+        void printAdjacencyConstraints() const;
 
         
         void addRotations(int numRotations) const;
@@ -37,15 +39,15 @@ class Tile {
 
         
 
-        inline const std::unordered_set<const Tile*>& getAdjacencyConstraints(Direction dir) const {
+        const std::unordered_set<const Tile*>& getAdjacencyConstraints(Direction dir) const {
             return adjacencyConstraints.at(dir);
         }
 
-        inline std::vector<Tile*> getTileSet() const {
+        std::vector<Tile*> getTileSet() const {
             return tileSet;
         }        
         
-        inline uint8_t getVoxelData(int x, int y, int z) const {
+        uint8_t getVoxelData(int x, int y, int z) const {
             return voxelData[x][y][z];
         }
 

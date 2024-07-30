@@ -1,10 +1,14 @@
 #include "wave.h"
+#include <filesystem>
+
 
 Wave::Wave(int gridWidth,  int gridDepth, int gridHeight, std::vector<Tile*> tileSet) {
     
     for (auto tile:tileSet) {
         tile->setAdjacencyConstraints();
+        //tile->printAdjacencyConstraints();
     }
+    //exit(1);
     //TODO: legg inn sjekk for width, depth og height større enn 1?
 
     grid.resize(gridWidth, gridDepth, gridHeight);
@@ -27,7 +31,8 @@ Wave::Wave(int gridWidth,  int gridDepth, int gridHeight, std::vector<Tile*> til
  * 
  * @return true if a cell was collapsed, false if not (all cells are collapsed)
 */
-bool Wave::observe() {
+bool Wave::observe(std::string baseFilepath, int& count) {
+   
     Cell* randomCell = pickRandomCellWithLowestEntropy();
 
     if(randomCell == nullptr) {
@@ -40,6 +45,12 @@ bool Wave::observe() {
         std::cerr << "\n\n not able to finish \n\n";
         exit(1);
     }
+
+    if (LOGGING) {
+        count++;
+        std::string filepath = baseFilepath + std::to_string(count) + "_observe" + ".vox";             
+        writeVoxFile(assemble(), filepath.c_str());
+        }  
 
     propagate(randomCell, WAVE_PROPAGATION_DEPTH);
 
@@ -163,10 +174,18 @@ Cell* Wave::pickRandomCellWithLowestEntropy() {
     std::vector<Cell*> flattenedGrid = grid.flatten();
 
     //remove all collapsed cells
-    flattenedGrid.erase(std::remove_if(flattenedGrid.begin(), flattenedGrid.end(),
-                                       [](Cell* cell)
-                                       { return cell->isCollapsed(); }),
-                                        flattenedGrid.end());
+    flattenedGrid.erase(
+        std::remove_if(
+            flattenedGrid.begin(), 
+            flattenedGrid.end(),
+            [](Cell* cell) { 
+                return cell->isCollapsed(); 
+            }
+        ),
+        flattenedGrid.end()
+    );
+
+
     if (flattenedGrid.empty()) {
         //all cells are collapsed
         return nullptr;
@@ -182,7 +201,7 @@ Cell* Wave::pickRandomCellWithLowestEntropy() {
     }
     
     //filter cells to include only those with the minimum entropy
-    std::vector<Cell*> minEntropyCells;
+    std::vector<Cell*> minEntropyCells; 
     std::copy_if(flattenedGrid.begin(), flattenedGrid.end(), std::back_inserter(minEntropyCells),
                  [minEntropy](Cell* cell) { return cell->getEntropy() == minEntropy; });
 
@@ -240,10 +259,13 @@ Cell* Wave::pickRandomCell() {
  * 
  * @return 3D vector of the assembled tiles
 */
-Vector3D<uint8_t> Wave::assemble() {
+Vector3D<uint8_t> Wave::assemble() const{
     Vector3D<uint8_t> finalModel;
     
     finalModel.resize(grid.dimX()*TILE_SIZE_X, grid.dimY()*TILE_SIZE_Y, grid.dimZ()*TILE_SIZE_Z);
+
+    //TODO: legg inn sjekk for at modellen ikke blir større enn det magicavoxel kan tåle
+
 
     for (size_t i = 0; i < grid.dimX(); i++) {
         for (size_t j = 0; j < grid.dimY(); j++) {
@@ -253,7 +275,7 @@ Vector3D<uint8_t> Wave::assemble() {
                 if (grid[i][j][k]->isCollapsed()) {
                     tile = grid[i][j][k]->tileOptions[0];
                 } else {
-                    std::cerr << "found empty slot in grid at x: " << i << ", y: "<< j << "z: "<< k << std::endl;
+                    //std::cerr << "found empty slot in grid at x: " << i << ", y: "<< j << "z: "<< k << std::endl;
                     continue;
                 }
                 
@@ -273,12 +295,40 @@ Vector3D<uint8_t> Wave::assemble() {
 
 
 Vector3D<uint8_t> Wave::run() {
-    while(observe()) {        
+
+    std::string baseFilepath = "vox_tiles/output_log/";
+    std::string filetype = ".vox";
+    std::string filepath;
+    int count = 0;
+
+    if (LOGGING) {
+        using namespace std::filesystem;
+        std::error_code ec;
+        remove_all("vox_tiles/output_log", ec);
+        if (ec) {
+            std::cerr << "Error removing directory: " << ec.message() << "\n";
+        } else {
+            create_directory("vox_tiles/output_log", ec);
+            if (ec) {
+                std::cerr << "Error creating directory: " << ec.message() << "\n";
+            }
+        }
+    }
+
+    while(observe(baseFilepath, count)) {
+        if (LOGGING) {
+            //count++;
+            filepath = baseFilepath + std::to_string(count) + "_propagate" +  filetype;             
+            writeVoxFile(assemble(), filepath.c_str());
+        }   
+        
         std::cout << "\nobserving ... \n";
     }
 
     return assemble();    
 }
+
+
 
 
 Wave::~Wave() {

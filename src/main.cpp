@@ -16,19 +16,20 @@ int main() {
 
     //-------------STAIRS--------------
 
-    Vector3D<uint8_t> stair = readVoxFile("vox_tiles/stairs/big_stair.vox");
-    Tile stairTile{"stair", stair};
-    stairTile.addRotations(3);
+    Vector3D<uint8_t> big_stair = readVoxFile("vox_tiles/stairs/big_stair.vox");
+    Tile big_stairTile{"stair", big_stair};
+    big_stairTile.addRotations(3);
 
     Vector3D<uint8_t> empty = readVoxFile("vox_tiles/stairs/empty.vox");
     Tile emptyTile{"empty", empty};   
 
-    Vector3D<uint8_t> stair_top_corner = readVoxFile("vox_tiles/stairs/stair_top_corner.vox");
-    Tile stair_top_cornerTile{"stair_top_corner", stair_top_corner};
-    stair_top_cornerTile.addRotations(3);
+    Vector3D<uint8_t> small_stair = readVoxFile("vox_tiles/stairs/small_stair.vox");
+    Tile small_stairTile{"small_stair", small_stair};
+    small_stairTile.addRotations(3);
+    
 
-    std::vector<Tile*> tileSet = emptyTile.getTileSet();
-//-------------------------------
+    std::vector<Tile*> tileSet = small_stairTile.getTileSet();
+    //-------------------------------
 
 
     Wave wave{WAVE_GRID_SIZE_X, WAVE_GRID_SIZE_Y, WAVE_GRID_SIZE_Z, tileSet};

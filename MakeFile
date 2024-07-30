@@ -2,7 +2,7 @@
 CXX = g++
 
 # Compiler flags
-CXXFLAGS = -std=c++11 -Wall -Wextra -pedantic -Iinclude -Isrc -g
+CXXFLAGS = -std=c++17 -Wall -Wextra -pedantic -Iinclude -Isrc -g
 
 # Source files
 SRCS = src/wave.cpp src/tile.cpp src/cell.cpp src/main.cpp src/voxParser.cpp src/vector3D.cpp
