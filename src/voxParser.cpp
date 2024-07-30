@@ -74,7 +74,6 @@ Vector3D<uint8_t> readVoxFile(const char* filePath) {
     Vector3D<uint8_t> voxelData;
 
     uint32_t chunkID;
-    int voxelCount = 0;
 
     while (file.read(reinterpret_cast<char*>(&chunkID), sizeof(chunkID))){
         uint32_t numBytesChunkContent;
@@ -140,7 +139,6 @@ Vector3D<uint8_t> readVoxFile(const char* filePath) {
                 file.read(&colorIndex, sizeof(colorIndex));
 
                 voxelData[x][y][z] = colorIndex;
-                voxelCount++;
             } 
 
             break;
@@ -219,7 +217,6 @@ uint32_t calculateMAINchunkSize(const Vector3D<uint8_t>& voxelData) {
     size += 12;  
     //size of SIZE chunk content
     size += 12;
-
     //size of XYZI chunk header
     size += 12;
     //size of XYZI chunk content
@@ -267,7 +264,7 @@ void writeVoxFile(const Vector3D<uint8_t>& voxelData, const char* filePath) {
     //--------------- SIZE chunk ---------------
     //header
     writeWord(file, "SIZE");  //chunk ID
-    writeInt(file, 12);       //num bytes of chunk content
+    writeInt(file, 12);       //num bytes of chunk content (3 words)
     writeInt(file, 0);        //num bytes of children chunk content
 
     //content
@@ -286,9 +283,9 @@ void writeVoxFile(const Vector3D<uint8_t>& voxelData, const char* filePath) {
     //content
     writeInt(file, static_cast<uint32_t>(countVoxels(voxelData)));
 
-    for (uint8_t i = 0; i < voxelData.dimX(); ++i) {
-        for (uint8_t j = 0; j < voxelData.dimY(); ++j) {
-            for (uint8_t k = 0; k < voxelData.dimZ(); ++k) {
+    for (uint8_t i = 0; i < voxelData.dimX(); i++) {
+        for (uint8_t j = 0; j < voxelData.dimY(); j++) {
+            for (uint8_t k = 0; k < voxelData.dimZ(); k++) {
                 uint8_t value = voxelData[i][j][k];
                 if (value != 0) {
                     writeChar(file, i);
