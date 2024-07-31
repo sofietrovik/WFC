@@ -14,7 +14,7 @@ Tile::Tile (std::string name, const Vector3D<uint8_t>& voxelData)
 void Tile::addRotations(int numRotations) const{
     Vector3D<uint8_t> newData = voxelData;
 
-    for(int i = 0; i < numRotations; i++) {
+    for(int i = 1; i < numRotations + 1; i++) {
         newData.rotateClockwise(1);
         new Tile{name + "_r" + std::to_string(i), newData};
     }
@@ -243,8 +243,7 @@ Tile::~Tile() {
     for (auto tile : tileSet) {
         if (tile->name == (this->name + "_r1")||
             tile->name == (this->name + "_r2")||
-            tile->name == (this->name + "_r3")||
-            tile->name == (this->name + "_r4")) {
+            tile->name == (this->name + "_r3")) {
             delete tile;
         }
     } 
