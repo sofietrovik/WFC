@@ -5,7 +5,7 @@
 Wave::Wave(int gridWidth,  int gridDepth, int gridHeight, std::vector<Tile*> tileSet) {
     
     for (auto tile:tileSet) {
-        tile->setAdjacencyConstraints();
+        tile->setAdjacencyConstraints(tileSet);
         //tile->printAdjacencyConstraints();
     }
     //exit(1);

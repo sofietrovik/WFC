@@ -5,15 +5,15 @@
 #include <cstdint>
 
 //propagation depth should probably be about double of the largest grid size
-const int WAVE_PROPAGATION_DEPTH = 24;
+const int WAVE_PROPAGATION_DEPTH = 150;
 
-const int WAVE_GRID_SIZE_X = 12;
-const int WAVE_GRID_SIZE_Y = 12;
-const int WAVE_GRID_SIZE_Z = 12;
+const int WAVE_GRID_SIZE_X = 31;
+const int WAVE_GRID_SIZE_Y = 31;
+const int WAVE_GRID_SIZE_Z = 5;
 
 
 //Capture intermediate models
-const bool LOGGING = false; 
+const bool LOGGING = true; 
 
 
 class Wave {

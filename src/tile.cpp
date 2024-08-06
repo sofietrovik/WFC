@@ -1,22 +1,22 @@
 #include "tile.h"
 
 
-Tile::Tile (std::string name, const Vector3D<uint8_t>& voxelData)
+Tile::Tile (std::string name, const Vector3D<uint8_t>& voxelData, std::vector<Tile*>& tileSet)
     :  name(name), voxelData(voxelData) {
     if (voxelData.dimX() != TILE_SIZE_X || voxelData.dimY() != TILE_SIZE_Y || voxelData.dimZ() != TILE_SIZE_Z) {
         throw std::runtime_error(std::string("Wrong tile dimensions"));
     }
     
     extractFaces();
-    tileSet.push_back(this);;
+    tileSet.push_back(this);
 }
 
-void Tile::addRotations(int numRotations) const{
+void Tile::addRotations(int numRotations, std::vector<Tile*>& tileSet) const{
     Vector3D<uint8_t> newData = voxelData;
 
     for(int i = 1; i < numRotations + 1; i++) {
         newData.rotateClockwise(1);
-        new Tile{name + "_r" + std::to_string(i), newData};
+        Tile* p_tile = new Tile{name + "_r" + std::to_string(i), newData, tileSet};
     }
 }
 
@@ -221,7 +221,7 @@ bool Tile::matchAllElements(std::vector<std::vector<uint8_t>> face, std::vector<
 }
 
 
-void Tile::setAdjacencyConstraints() {
+void Tile::setAdjacencyConstraints(std::vector<Tile*> tileSet) {
     for (int dir = FRONT; dir < NUM_DIRECTIONS; dir++) {
         adjacencyConstraints[static_cast<Direction>(dir)] = std::unordered_set<const Tile*>();
     }
@@ -236,15 +236,5 @@ void Tile::setAdjacencyConstraints() {
     }
 }
 
-std::vector<Tile*> Tile::tileSet;
 
-//kinda... hacky
-Tile::~Tile() {
-    for (auto tile : tileSet) {
-        if (tile->name == (this->name + "_r1")||
-            tile->name == (this->name + "_r2")||
-            tile->name == (this->name + "_r3")) {
-            delete tile;
-        }
-    } 
-}
+
