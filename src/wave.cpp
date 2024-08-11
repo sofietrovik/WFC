@@ -9,7 +9,6 @@ Wave::Wave(int gridWidth,  int gridDepth, int gridHeight, std::vector<Tile*> til
         //tile->printAdjacencyConstraints();
     }
     //exit(1);
-    //TODO: legg inn sjekk for width, depth og height større enn 1?
 
     grid.resize(gridWidth, gridDepth, gridHeight);
 
@@ -40,11 +39,7 @@ bool Wave::observe(std::string baseFilepath, int& count) {
         return false;
     }
 
-    if(!randomCell->collapse()) {
-        //a cell has no tileoptions left
-        std::cerr << "\n\n not able to finish \n\n";
-        exit(1);
-    }
+    randomCell->collapse();
 
     if (LOGGING) {
         count++;
@@ -52,7 +47,9 @@ bool Wave::observe(std::string baseFilepath, int& count) {
         writeVoxFile(assemble(), filepath.c_str());
         }  
 
-    propagate(randomCell, WAVE_PROPAGATION_DEPTH);
+    breadthPropagate(randomCell);
+    // propagate(randomCell, WAVE_PROPAGATION_DEPTH);
+
 
     return true;
 }
@@ -74,42 +71,67 @@ void Wave::propagate(Cell* cell, int depth) {
     if (depth < 0) {
         return;
     }
-
-    std::unordered_map<Direction, std::unordered_set<const Tile*>> allowedTiles;
-
+    
     for (Direction dir : {FRONT, BACK, LEFT, RIGHT, TOP, BOTTOM}) {
-        allowedTiles[dir] = std::unordered_set<const Tile*>();
-    }
-
-    std::vector<Tile*> currentTileOptions = cell->tileOptions;
-    std::unordered_set<Tile*> uniqueElements(currentTileOptions.begin(), currentTileOptions.end());
-
-    for (auto tile : uniqueElements) {
-        for (Direction dir : {FRONT, BACK, LEFT, RIGHT, TOP, BOTTOM}) {
-            std::unordered_set<const Tile*> constraints = tile->getAdjacencyConstraints(dir);
-            allowedTiles[dir].insert(constraints.begin(), constraints.end());
-        }
-    }
-
-    //We need to propagate the constraints to the adjacent cells and remove invalid tile options.
-    for (Direction dir : {FRONT, BACK, LEFT, RIGHT, TOP, BOTTOM}) {
-
         Cell* adjacentCell = getAdjacentCell(cell, dir);
 
         if (adjacentCell == nullptr || adjacentCell->isCollapsed()) {
             continue;
         }
+        if (adjacentCell == nullptr) {
+            continue;
+        }
 
-        // Convert the unordered_set to a vector, so it can be used with updateTileOptions
+        std::unordered_set<const Tile*> uniqueConstraints;
+        for (auto tile : cell->tileOptions) {            
+            std::unordered_set<const Tile*> constraints = tile->getAdjacencyConstraints(dir);
+            uniqueConstraints.insert(constraints.begin(), constraints.end());
+        }
+
         std::vector<Tile*> allowedTileOptions;
-        for (const Tile* tile : allowedTiles[dir]) {
+        for (const Tile* tile : uniqueConstraints) {
             allowedTileOptions.push_back(const_cast<Tile*>(tile));
         }
 
         bool updated = adjacentCell->updateTileOptions(allowedTileOptions);
-
         if (updated) {
             propagate(adjacentCell, depth);
+        }        
+    }
+}
+
+
+
+void Wave::breadthPropagate(Cell* startCell) {
+    std::queue<Cell*> queue;
+    queue.push(startCell);
+
+    while (!queue.empty()) {
+        auto cell = queue.front();
+        queue.pop();
+
+        for (Direction dir : {FRONT, BACK, LEFT, RIGHT, TOP, BOTTOM}) {
+            Cell* adjacentCell = getAdjacentCell(cell, dir);
+
+            if (adjacentCell == nullptr || adjacentCell->isCollapsed()) {
+                continue;
+            }
+
+            std::unordered_set<const Tile*> uniqueConstraints;
+            for (auto tile : cell->tileOptions) {            
+                std::unordered_set<const Tile*> constraints = tile->getAdjacencyConstraints(dir);
+                uniqueConstraints.insert(constraints.begin(), constraints.end());
+            }
+
+            std::vector<Tile*> allowedTileOptions;
+            for (const Tile* tile : uniqueConstraints) {
+                allowedTileOptions.push_back(const_cast<Tile*>(tile));
+            }
+
+            bool updated = adjacentCell->updateTileOptions(allowedTileOptions);
+            if (updated) {
+                queue.push(adjacentCell);
+            }
         }
     }
 }
@@ -314,16 +336,20 @@ Vector3D<uint8_t> Wave::run() {
             }
         }
     }
-
+    auto start = std::chrono::high_resolution_clock::now();
     while(observe(baseFilepath, count)) {
         if (LOGGING) {
-            //count++;
             filepath = baseFilepath + std::to_string(count) + "_propagate" +  filetype;             
             writeVoxFile(assemble(), filepath.c_str());
         }   
         
-        std::cout << "\nobserving ... \n";
+        //std::cout << "observing ...";
     }
+    auto end = std::chrono::high_resolution_clock::now();
+
+    std::chrono::duration<double> duration = end - start;
+
+    std::cout << "Elapsed time: " << duration.count() << " seconds" << std::endl;
 
     return assemble();    
 }

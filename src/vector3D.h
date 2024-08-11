@@ -79,10 +79,9 @@ public:
             size_t y = dimY();
             size_t z = dimZ();
 
-            // Create a new 3D vector to hold rotated data
             std::vector<std::vector<std::vector<T>>> newData(y, std::vector<std::vector<T>>(x, std::vector<T>(z)));
 
-            // Rotate 90 degrees clockwise along the z-axis
+            //rotate 90 degrees clockwise along the z-axis
             for (size_t i = 0; i < x; ++i) {
                 for (size_t j = 0; j < y; ++j) {
                     for (size_t k = 0; k < z; ++k) {

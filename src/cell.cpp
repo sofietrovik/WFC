@@ -5,10 +5,9 @@ Cell::Cell(std::vector<Tile*> tileOptions, int x, int y, int z)
         entropy = tileOptions.size();
     }
 
-bool Cell::collapse() {
+void Cell::collapse() {
     if (tileOptions.empty()) {
-        std::cerr << "Error: Attempting to collapse a cell with no tile options available." << std::endl;
-        return false;
+        throw std::runtime_error("Error: Attempting to collapse a cell with no tile options available. The algorithm has failed");
     }
     
     std::random_device rd;
@@ -17,10 +16,7 @@ bool Cell::collapse() {
     int randomIndex = dis(gen);
 
     tileOptions = {tileOptions[randomIndex]};
-
     updateEntropy();
-    
-    return true;
 }
 
 bool Cell::isCollapsed() const{
@@ -30,10 +26,8 @@ bool Cell::isCollapsed() const{
 void Cell::updateEntropy() {
     entropy = tileOptions.size();
 
-    //a cell has been collapsed by propagation of another collapse
     if (entropy == 1) {
         collapsed = true;
-        //std::cout << "\n x: " << x << "y: " << y << "z: " << z << " has been collapsed \n"; 
     }
 }
 
@@ -61,7 +55,6 @@ int Cell::getZ() const {
  * @return 'true' if the number of tiles in tileOptions was reduced 'false' if it was not  
 */
 bool Cell::updateTileOptions(std::vector<Tile*> allowedTileOptions) {
-    //TODO: improve by sorting tileOptions before initializing, so that I can binary_search?
 
     tileOptions.erase(
         std::remove_if(
@@ -74,10 +67,8 @@ bool Cell::updateTileOptions(std::vector<Tile*> allowedTileOptions) {
         tileOptions.end()
     );
 
-
     if(tileOptions.empty()) {
-        std::cerr << "\na cell has no tile options left\n";
-        exit(1);
+        throw std::runtime_error("Error: A cell has no tile options left after an update.");
     }
 
     //check if the entropy has changed (check if some elements have been removed from tile options)
@@ -85,7 +76,6 @@ bool Cell::updateTileOptions(std::vector<Tile*> allowedTileOptions) {
         updateEntropy();
         return true;
     }
-
  
     return false;
 }

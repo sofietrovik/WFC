@@ -5,7 +5,6 @@
 #include <random>
 #include <algorithm>
 
-
 //forward declaration of Wave to make it a friend class
 class Wave;
 
@@ -21,7 +20,6 @@ class Cell {
         Cell() = delete;
 
     private:
-        // Private constructor to prevent direct creation
         Cell(std::vector<Tile*> tileOptions, int x, int y, int z);
 
         //coordinates in wave grid
@@ -33,7 +31,7 @@ class Cell {
         int entropy;
         std::vector<Tile*> tileOptions;
 
-        bool collapse();  
+        void collapse();  
         void updateEntropy();
         bool updateTileOptions(std::vector<Tile*> allowedTileOptions);
 

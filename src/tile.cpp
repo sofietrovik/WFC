@@ -14,9 +14,9 @@ Tile::Tile (std::string name, const Vector3D<uint8_t>& voxelData, std::vector<Ti
 void Tile::addRotations(int numRotations, std::vector<Tile*>& tileSet) const{
     Vector3D<uint8_t> newData = voxelData;
 
-    for(int i = 1; i < numRotations + 1; i++) {
+    for(int i = 1; i <= std::min(numRotations, 3); i++) {
         newData.rotateClockwise(1);
-        Tile* p_tile = new Tile{name + "_r" + std::to_string(i), newData, tileSet};
+        new Tile{name + "_r" + std::to_string(i), newData, tileSet};
     }
 }
 
@@ -105,10 +105,10 @@ std::vector<std::vector<uint8_t>> findCenterElements(const std::vector<std::vect
     std::vector<std::vector<uint8_t>> centers;
 
     size_t numRows = array.size();
-    if (numRows == 0) return centers;  // Return empty if the array is empty
+    if (numRows == 0) return centers;  
 
     size_t numCols = array[0].size();
-    if (numCols == 0) return centers;  // Return empty if any row is empty
+    if (numCols == 0) return centers;
 
     size_t centerRow = numRows / 2;
     size_t centerCol = numCols / 2;
@@ -121,7 +121,6 @@ std::vector<std::vector<uint8_t>> findCenterElements(const std::vector<std::vect
         centers.push_back({array[centerRow - 1][centerCol]});
         centers.push_back({array[centerRow][centerCol]});
     } else {
-        // Both dimensions are even
         centers.push_back({array[centerRow - 1][centerCol - 1], array[centerRow - 1][centerCol]});
         centers.push_back({array[centerRow][centerCol - 1], array[centerRow][centerCol]});
     }
@@ -211,14 +210,16 @@ bool Tile::matchAllElements(std::vector<std::vector<uint8_t>> face, std::vector<
         for (size_t y = 0; y < numCols; y++) {
             if (face[x][y] != otherFace[x][y]) {
                 errorCount++;
-                if (errorCount > allowedErrorCount) {
-                    return false;
-                }      
             }
+            if (errorCount > allowedErrorCount) {
+                return false;
+            }      
         }
     }
     return true;
 }
+
+
 
 
 void Tile::setAdjacencyConstraints(std::vector<Tile*> tileSet) {
