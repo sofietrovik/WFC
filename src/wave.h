@@ -6,12 +6,10 @@
 #include <queue>
 #include <chrono>
 
-//propagation depth should probably be about double of the largest grid size
-const int WAVE_PROPAGATION_DEPTH = 10000;
 
-const int WAVE_GRID_SIZE_X = 30;
-const int WAVE_GRID_SIZE_Y = 30;
-const int WAVE_GRID_SIZE_Z = 30;
+const int WAVE_GRID_SIZE_X = 10;
+const int WAVE_GRID_SIZE_Y = 10;
+const int WAVE_GRID_SIZE_Z = 10;
 
 
 //capture intermediate models
@@ -30,7 +28,7 @@ class Wave {
         Vector3D<Cell*> grid;  
 
         bool observe(std::string baseFilePath, int& count);
-        void propagate(Cell* cell, int depth);
+        void depthPropagate(Cell* cell, int depth);
         void breadthPropagate(Cell* cell);
         Vector3D<uint8_t> assemble() const;
 

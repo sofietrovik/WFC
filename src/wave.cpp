@@ -47,8 +47,8 @@ bool Wave::observe(std::string baseFilepath, int& count) {
         writeVoxFile(assemble(), filepath.c_str());
         }  
 
+    //depthPropagate(randomCell, 100000);
     breadthPropagate(randomCell);
-    // propagate(randomCell, WAVE_PROPAGATION_DEPTH);
 
 
     return true;
@@ -66,7 +66,7 @@ bool Wave::observe(std::string baseFilepath, int& count) {
  * @param cell cell object that has had its tileOptions updated.
  * @param depth maximum depth of the propagation in terms of number of cells traversed from the input cell
 */
-void Wave::propagate(Cell* cell, int depth) {
+void Wave::depthPropagate(Cell* cell, int depth) {
     depth = depth - 1;
     if (depth < 0) {
         return;
@@ -95,7 +95,7 @@ void Wave::propagate(Cell* cell, int depth) {
 
         bool updated = adjacentCell->updateTileOptions(allowedTileOptions);
         if (updated) {
-            propagate(adjacentCell, depth);
+            depthPropagate(adjacentCell, depth);
         }        
     }
 }
